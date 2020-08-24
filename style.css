@@ -161,6 +161,10 @@ input[type='number'] {
   width: 30px;
 }
 
+.btn {
+  cursor: pointer;
+}
+
 .btn:focus,
 .delete-btn:focus {
   outline: 0;

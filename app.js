@@ -6,15 +6,16 @@ const form = document.getElementById("form");
 const textField = document.getElementById("text");
 const amountField = document.getElementById("amount");
 
-const dummyTransactions = [
-    {id: 1, text: "Flower", amount: -20},
-    {id: 2, text: "Salary", amount: 320},
-    {id: 3, text: "Book", amount: -10},
-    {id: 4, text: "Camera", amount: 120},
-];
+// const dummyTransactions = [
+//     {id: 1, text: "Flower", amount: -20},
+//     {id: 2, text: "Salary", amount: 320},
+//     {id: 3, text: "Book", amount: -10},
+//     {id: 4, text: "Camera", amount: 120},
+// ];
 
-// TODO: Implement LocalStorage
-let transactions = dummyTransactions;
+let localStorageTransactions = JSON.parse(localStorage.getItem("transactions"));
+
+let transactions = localStorage.getItem("transactions") !== null ? localStorageTransactions : [];
 
 // Functions
 // Add Transactions
@@ -26,7 +27,7 @@ function addTransactionDOM(transaction) {
     // Add class based on value
     item.classList.add(transaction.amount > 0 ? "plus" : "minus");
     item.innerHTML = `
-    ${transaction.text}<span>${sign}${Math.abs(transaction.amount)}</span><button class="delete-btn">X</button></li>
+    ${transaction.text}<span>${sign}${Math.abs(transaction.amount)}</span><button class="delete-btn" onclick="removeTransaction(${transaction.id})">X</button></li>
     `;
     list.appendChild(item)
 }
@@ -47,8 +48,41 @@ function updateValues() {
     moneyPlus.innerText = `$${income}`
     moenyMinus.innerText = `$${expense}`
 
-    
-    
+}
+
+function addTransaction(e) {
+    e.preventDefault();
+    if (textField.value.trim() === "" || amountField.value.trim() === "") {
+        alert("Please add a text and an amount")
+    } else {
+        const transaction = {
+            id: generateId(),
+            text: textField.value.trim(),
+            amount: +amountField.value.trim()
+        }
+
+        transactions.push(transaction);
+        addTransactionDOM(transaction);
+        updateValues();
+        updateLocalStorage();
+
+        textField.value = "";
+        amountField.value = "";
+    }
+}
+
+function generateId() {
+    return Math.floor(Math.random() * 100000000);
+}
+
+function updateLocalStorage() {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+function removeTransaction(id) {
+    transactions = transactions.filter(transaction => transaction.id !== id);
+    updateLocalStorage();
+    init();
 }
 
 // App Init
@@ -61,3 +95,4 @@ function init() {
 init();
 
 // Listeners
+form.addEventListener("submit", addTransaction);
