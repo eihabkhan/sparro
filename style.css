@@ -136,7 +136,7 @@ input[type='number'] {
 }
 
 .list li.plus {
-  color: #1da757;
+  border-right: 5px solid #1da757;
 }
 
 .list li.minus {
